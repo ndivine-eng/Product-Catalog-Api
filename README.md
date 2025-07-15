@@ -17,6 +17,7 @@ A RESTful API built using **Node.js**, **Express.js**, and **MongoDB** that powe
 - Reporting (e.g., low stock products)
 - Input validation and error handling
 - API documentation via Swagger
+- my application
 
 ---
 
