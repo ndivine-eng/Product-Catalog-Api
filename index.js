@@ -6,16 +6,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// Import route handlers
-const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-
 // Initialize Express app
 const app = express();
+
+// Swagger setup
+const { swaggerUi, swaggerSpec } = require('./swagger');
 
 // Middleware setup
 app.use(cors());
 app.use(express.json()); // Allows app to parse JSON request bodies
+
+// Swagger route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Import route handlers
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -28,7 +34,7 @@ app.use('/categories', categoryRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.send(' Product Catalog API is running. Use /products or /categories.');
+  res.send(' Product Catalog API is running. Use /products or /categories or visit /api-docs for documentation.');
 });
 
 // Start the server

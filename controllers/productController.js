@@ -1,3 +1,4 @@
+
 const Product = require('../models/Product');
 
 // Create product
@@ -11,11 +12,10 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// Get all products (with search & filtering)
+// Get all products with search, filtering, and price range
 exports.getAllProducts = async (req, res) => {
   try {
     const { search, category, minPrice, maxPrice } = req.query;
-
     const query = {};
 
     if (search) {
@@ -24,11 +24,7 @@ exports.getAllProducts = async (req, res) => {
         { description: { $regex: search, $options: 'i' } }
       ];
     }
-
-    if (category) {
-      query.category = category;
-    }
-
+    if (category) query.category = category;
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = parseFloat(minPrice);
@@ -46,7 +42,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate('category');
-    if (!product) return res.status(404).json({ message: 'Not found' });
+    if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -57,7 +53,7 @@ exports.getProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: 'Not found' });
+    if (!updated) return res.status(404).json({ message: 'Product not found' });
     res.json(updated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -68,18 +64,21 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Not found' });
-    res.json({ message: 'Deleted successfully' });
+    if (!deleted) return res.status(404).json({ message: 'Product not found' });
+    res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Get low-stock products
-exports.getLowStock = async (req, res) => {
+// Low Stock Reporting Endpoint
+exports.getLowStockProducts = async (req, res) => {
   try {
-    const threshold = parseInt(req.query.limit) || 10;
-    const products = await Product.find({ stock: { $lt: threshold } });
+    const threshold = parseInt(req.query.threshold) || 5;
+    const products = await Product.find({
+      variants: { $elemMatch: { stock: { $lt: threshold } } }
+    }).populate('category');
+
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
