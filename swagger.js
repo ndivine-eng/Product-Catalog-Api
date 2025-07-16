@@ -1,24 +1,28 @@
 // swagger.js
+
+// Import Swagger UI Express and swagger-jsdoc
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
-// Swagger configuration
+// Swagger configuration options
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: '3.0.0', // OpenAPI specification version
     info: {
       title: 'Product Catalog API',
       version: '1.0.0',
-      description: 'API documentation for the Product Catalog System built with Node.js, Express, and MongoDB.',
+      description:
+        'Comprehensive API documentation for the Product Catalog System built with Node.js, Express, and MongoDB.',
     },
     servers: [
       {
-        url: 'http://localhost:5000',
+        url: 'http://localhost:5000', // Your local server URL
         description: 'Development server',
       },
     ],
     components: {
       schemas: {
+        // Product Schema
         Product: {
           type: 'object',
           required: ['name', 'price', 'category', 'stock'],
@@ -45,21 +49,32 @@ const options = {
             },
             category: {
               type: 'string',
-              example: '68765e6e7cb9b87cdfacbc37',
+              example: '68765e6e7cb9b87cdfacbc37', // Example ObjectId
             },
             variants: {
               type: 'array',
               items: {
                 type: 'object',
                 properties: {
-                  size: { type: 'string', example: '13 inch' },
-                  color: { type: 'string', example: 'Silver' },
-                  stock: { type: 'number', example: 5 },
+                  size: {
+                    type: 'string',
+                    example: '13 inch',
+                  },
+                  color: {
+                    type: 'string',
+                    example: 'Silver',
+                  },
+                  stock: {
+                    type: 'number',
+                    example: 5,
+                  },
                 },
               },
             },
           },
         },
+
+        // Category Schema
         Category: {
           type: 'object',
           required: ['name'],
@@ -77,11 +92,15 @@ const options = {
       },
     },
   },
-  apis: ['./routes/*.js'], // path to the API routes with Swagger annotations
+
+  // Points Swagger to route files that contain annotations
+  apis: ['./routes/*.js'],
 };
 
+// Generate swagger documentation object
 const swaggerSpec = swaggerJsdoc(options);
 
+// Export Swagger UI middleware and spec for use in index.js
 module.exports = {
   swaggerUi,
   swaggerSpec,
