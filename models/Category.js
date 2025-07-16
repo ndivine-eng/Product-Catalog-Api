@@ -17,5 +17,5 @@ const categorySchema = new mongoose.Schema({
   }
 });
 
-// ✅ Prevent OverwriteModelError during development
+// Prevent OverwriteModelError during development
 module.exports = mongoose.models.Category || mongoose.model('Category', categorySchema);

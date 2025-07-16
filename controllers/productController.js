@@ -74,3 +74,14 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get low-stock products
+exports.getLowStock = async (req, res) => {
+  try {
+    const threshold = parseInt(req.query.limit) || 10;
+    const products = await Product.find({ stock: { $lt: threshold } });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

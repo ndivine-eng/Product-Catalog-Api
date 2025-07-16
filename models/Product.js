@@ -1,23 +1,33 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: String,
-  price: { type: Number, required: true },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true,
-  },
-  variants: [
-    {
-      size: String,
-      color: String,
-      stock: Number,
-    }
-  ],
-  createdAt: { type: Date, default: Date.now }
+const variantSchema = new mongoose.Schema({
+  size: String,
+  color: String,
+  stock: {
+    type: Number,
+    default: 0
+  }
 });
 
-// ✅ Prevent OverwriteModelError during development
-module.exports = mongoose.models.Product || mongoose.model('Product', productSchema);
+const productSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  price: Number,
+  stock: Number,
+  discount: {
+    type: Number,
+    default: 0
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
+  variants: [variantSchema], // Array of variant objects
+}, { timestamps: true });
+
+productSchema.virtual('finalPrice').get(function () {
+  return this.price - (this.price * this.discount);
+});
+productSchema.set('toJSON', { virtuals: true });
+
+module.exports = mongoose.model('Product', productSchema);
