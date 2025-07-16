@@ -1,154 +1,155 @@
+
 # Product Catalog API
 
-A RESTful API built using **Node.js**, **Express.js**, and **MongoDB** that powers a backend for a product catalog system — similar to an e-commerce platform. The API supports full CRUD operations, inventory tracking, product variants, category management, and search/filter functionality.
+A RESTful API built using **Node.js**, **Express.js**, and **MongoDB**. This backend powers a product catalog similar to an e-commerce platform, supporting full CRUD operations, inventory tracking, product variants, category management, search/filtering, and more.
 
 ---
 
-##  Features
+## Features
 
 - Product CRUD (Create, Read, Update, Delete)
 - Category CRUD
-- Product search and filtering (by name, category, date)
+- Product search and filtering (by name, category, price)
 - Product variants (e.g., size, color)
 - Inventory tracking (stock levels)
 - Environment configuration with `.env`
 - Pricing and discounts
-- Use with Postman or Thunder Client
 - Reporting (e.g., low stock products)
 - Input validation and error handling
-- API documentation via Swagger
-- my application
+- API documentation via Swagger UI
+- Works with Postman or Thunder Client
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 - **Backend:** Node.js, Express.js
-- **Database:** MongoDB (via Mongoose)
+- **Database:** MongoDB (Mongoose)
 - **Validation:** express-validator
-- **API Testing:** Postman / Insomnia
+- **API Testing:** Postman, Thunder Client, Insomnia
 - **Documentation:** Swagger UI
 
 ---
 
-##  Project Structure
+## Project Structure
+
+```
 product-catalog-api/
-├── config/                         # Configuration files (if needed in future)
-│
-├── controllers/                   # Request handlers
-│   ├── categoryController.js      # Logic for category endpoints
-│   └── productController.js       # Logic for product endpoints
-│
-├── middleware/                    # Custom middleware
-│   └── validateProduct.js         # Validation middleware using express-validator
-│
-├── models/                        # Mongoose schemas
-│   ├── Category.js                # Category model
-│   └── Product.js                 # Product model (with variants, stock, etc.)
-│
-├── routes/                        # API route definitions
-│   ├── categoryRoutes.js          # Category routes
-│   └── productRoutes.js           # Product routes
-│
-├── node_modules/                  # Installed dependencies
-│
-├── .env                           # Environment variables (Mongo URI, PORT, etc.)
-├── .gitignore                     # Ignored files/folders for git
-├── index.js                       # Main server entry point
-├── package.json                   # Project metadata and scripts
-├── package-lock.json              # Exact dependency versions
-├── README.md                      # Project documentation
-└── swagger.js                     # Swagger/OpenAPI documentation config
-
+├── config/               # Configuration files (future use)
+├── controllers/          # Request handlers
+│   ├── categoryController.js
+│   └── productController.js
+├── middleware/           # Custom middleware
+│   └── validateProduct.js
+├── models/               # Mongoose schemas
+│   ├── Category.js
+│   └── Product.js
+├── routes/               # API route definitions
+│   ├── categoryRoutes.js
+│   └── productRoutes.js
+├── node_modules/
+├── .env                  # Environment variables
+├── .gitignore
+├── index.js              # Server entry point
+├── package.json
+├── package-lock.json
+├── README.md
+└── swagger.js            # Swagger/OpenAPI documentation config
+```
 
 ---
 
+## Installation & Setup
 
-## ⚙️ Installation & Setup
+### 1. Clone the Repository
 
-### 1. Clone the Repo
-
+```
 git clone https://github.com/your-username/product-catalog-api.git
-
 cd product-catalog-api
+```
 
+### 2. Install Dependencies
 
-----
+```
 npm install
+```
 
----
+### 3. Create a `.env` File in the Project Root
 
-### Set up .env
+Paste the following into `.env`:
 
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/product_catalog
-
-###  Create .env File
-
-# Create a .env file in the root directory and add:
-
+```
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/product_catalog
 JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRATION=1h
+```
 
-## Start MongoDB
+### 4. Start MongoDB
 
+```
 mongod
+```
 
+### 5. Run the Server
 
-
-## Run the server
+```
 npm run dev
+```
 
-# You should see:
+**If successful, you’ll see:**
 
-Connected to MongoDB
-Server running at http://localhost:5000
+- `Connected to MongoDB`
+- `Server running at http://localhost:5000`
 
+---
 
+## API Endpoints
 
+### Category Endpoints
 
-## API endpoint 
+| Method | Endpoint               | Description        |
+|--------|------------------------|--------------------|
+| GET    | `/categories`          | Get all categories |
+| GET    | `/categories/:id`      | Get category by ID or slug |
+| POST   | `/categories`          | Create category    |
+| PUT    | `/categories/:id`      | Update category    |
+| DELETE | `/categories/:id`      | Delete category    |
 
-# a. Categories
+### Product Endpoints
 
-| Method | Endpoint          | Description        |
-| ------ | ----------------- | ------------------ |
-| GET    | `/categories`     | Get all categories |
-| GET    | `/categories/:id` | Get category by ID |
-| POST   | `/categories`     | Create category    |
-| PUT    | `/categories/:id` | Update category    |
-| DELETE | `/categories/:id` | Delete category    |
+| Method | Endpoint                              | Description                  |
+|--------|---------------------------------------|------------------------------|
+| GET    | `/products`                           | Get all products             |
+| GET    | `/products/:id`                       | Get product by ID            |
+| POST   | `/products`                           | Create a product             |
+| PUT    | `/products/:id`                       | Update a product             |
+| DELETE | `/products/:id`                       | Delete a product             |
+| GET    | `/products?search=tv`                 | Search products by name/desc |
+| GET    | `/products?category=ID`               | Filter by category           |
+| GET    | `/products?minPrice=10&maxPrice=100`  | Filter by price range        |
 
+---
 
-# b.  product
+## Example Requests
 
-| Method | Endpoint                             | Description                  |
-| ------ | ------------------------------------ | ---------------------------- |
-| GET    | `/products`                          | Get all products             |
-| GET    | `/products/:id`                      | Get product by ID            |
-| POST   | `/products`                          | Create a product             |
-| PUT    | `/products/:id`                      | Update a product             |
-| DELETE | `/products/:id`                      | Delete a product             |
-| GET    | `/products?search=tv`                | Search products by name/desc |
-| GET    | `/products?category=ID`              | Filter products by category  |
-| GET    | `/products?minPrice=10&maxPrice=100` | Filter by price range        |
+### Create a Category
 
-
-### Example request 
-
-# Create a Category
+```
 POST /categories
+Content-Type: application/json
 
 {
   "name": "Electronics",
   "description": "Electronic gadgets and devices"
 }
+```
 
-# Create a Product
+### Create a Product
 
+```
 POST /products
+Content-Type: application/json
 
 {
   "name": "Smartphone",
@@ -170,69 +171,78 @@ POST /products
     }
   ]
 }
+```
 
+---
 
-### Testing with Postman or Thunder Client
+## Testing with Postman or Thunder Client
 
-## 1. Create a Category
+**Create a Category**
 
-- POST http://localhost:5000/categories
+```
+POST http://localhost:5000/categories
+```
 
-{
-  "name": "Electronics",
-  "description": "Electronic gadgets and devices"
-}
+**Create a Product**
 
-
-## 2. Create a Product
+```
 POST http://localhost:5000/products
+```
 
-{
-  "name": "Smartphone",
-  "description": "Latest smartphone model",
-  "price": 699.99,
-  "category": "68765e6e7cb9b87cdfacbc37",
-  "variants": [
-    {
-      "size": "6.1 inch",
-      "color": "Black",
-      "stock": 10
-    }
-  ]
-}
+**Get All Products**
 
-## Get All Products
+```
 GET http://localhost:5000/products
+```
 
-## 4. Get One Product
+**Get One Product**
+
+```
 GET http://localhost:5000/products/:id
+```
 
-## 55. Update a Product
+**Update a Product**
+
+```
 PUT http://localhost:5000/products/:id
+```
 
+```
 {
   "price": 749.99,
   "stock": 8
 }
+```
 
+**Delete a Product**
 
-## 6. Delete a Product
+```
 DELETE http://localhost:5000/products/:id
+```
 
+**Filter by Category**
 
-
-##  7. Filter by Category
+```
 GET http://localhost:5000/products?category=68765e6e7cb9b87cdfacbc37
+```
 
-## 8. Search by Name
+**Search by Name**
 
+```
 GET http://localhost:5000/products?search=smartphone
+```
 
-## 9. Filter by Price Range
+**Filter by Price Range**
 
+```
 GET http://localhost:5000/products?minPrice=100&maxPrice=800
+```
+
+---
 
 ### Example Category IDs for Testing
+
+```
 [
   {
     "_id": "68765e6e7cb9b87cdfacbc37",
@@ -250,72 +260,77 @@ GET http://localhost:5000/products?minPrice=100&maxPrice=800
     "description": "Men and Women clothing"
   }
 ]
-
-
-### Validation & Error Handling
-
-Validates required fields (name, price, category)
-
-Ensures price, stock, discount are numbers
-
-Returns meaningful error messages with correct status codes
-
-
-### Swagger UI documentation
-
-Visit: http://localhost:5000/api-docs
-
-
-To explore all available endpoints with live documentation powered by **Swagger UI**.
+```
 
 ---
 
-## Slug Support
+## Validation & Error Handling
 
-Categories automatically generate a **slug** based on their name, which makes URLs cleaner and more human-readable.
+- Validates required fields (e.g., `name`, `price`, `category`)
+- Ensures `price`, `stock`, and `discount` are numbers
+- Returns meaningful error messages with correct status codes
+- Input sanitization using `express-validator` to prevent XSS and ensure clean input
 
-For example:
+---
 
+## API Documentation (Swagger UI)
+
+Visit: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)  
+*Live documentation with interactive try-out support.*
+
+---
+
+## Slug Support for Categories
+
+- Categories automatically generate a **slug** from their name for cleaner URLs.
+
+Example request:
+```
 {
   "name": "Men's Clothing"
 }
+```
 
-Will generate a slug:
+Slug generated:
 
+```
 mens-clothing
+```
 
-So instead of:
-
+Instead of:
+```
 GET /categories/68765e6e7cb9b87cdfacbc37
-
-You can do:
+```
+You can also use:
+```
 GET /categories/mens-clothing
+```
 
-## sanitization techniques
-- Input sanitization is handled using `express-validator` to prevent XSS and ensure clean user input.
+---
 
-### Low-stock reporting endpoint
+## Low-Stock Reporting Endpoint
 
-Low-Stock Reporting Endpoint
-This endpoint helps you identify products that are running low in stock (including base stock and variant stock if applicable)
+Identify products that are running low on stock (including variants).
 
-## End point
+| Method | Endpoint               | Description                     |
+|--------|------------------------|---------------------------------|
+| GET    | `/products/low-stock`  | Get all products with low stock |
 
-| Method | Endpoint              | Description                     |
-| ------ | --------------------- | ------------------------------- |
-| GET    | `/products/low-stock` | Get all products with low stock |
+**Query Parameters:**
 
-## Query Parameters
-| Param     | Type   | Description                                                  |
-| --------- | ------ | ------------------------------------------------------------ |
-| threshold | Number | (Optional) Stock level to consider as "low". Default is `5`. |
+| Param     | Type   | Description                                        |
+|-----------|--------|----------------------------------------------------|
+| threshold | Number | (Optional) Stock level to consider as "low". Default: `5` |
 
-## GET http://localhost:5000/products/low-stock?threshold=3
+Example usage:
 
+```
 GET http://localhost:5000/products/low-stock?threshold=3
+```
 
-## Sample Response
+**Sample response:**
 
+```
 [
   {
     "_id": "687700c93c8d27880b9f9001",
@@ -331,3 +346,15 @@ GET http://localhost:5000/products/low-stock?threshold=3
     "__v": 0
   }
 ]
+```
+
+---
+
+## Security & Best Practices
+
+- Input sanitization with `express-validator`
+- Proper error handling
+- .env for secrets and config
+- JWT support for future authentication (see `.env` setup)
+
+---
