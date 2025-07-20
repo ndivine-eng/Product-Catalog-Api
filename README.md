@@ -34,6 +34,32 @@ A RESTful API built using **Node.js**, **Express.js**, and **MongoDB**. This bac
 
 ```
 product-catalog-api/
+├── config/                     # Configuration files
+├── controllers/                # Request handlers
+│   ├── categoryController.js
+│   └── productController.js
+├── middleware/                 # Custom middleware
+│   ├── handleValidationErrors.js
+│   ├── validate.js
+│   └── validateProduct.js
+├── models/                     # Mongoose schemas
+│   ├── Category.js
+│   ├── orderModel.js
+│   └── Product.js
+├── routes/                     # API route definitions
+│   ├── categoryRoutes.js
+│   ├── orderRoutes.js
+│   └── productRoutes.js
+├── node_modules/               # Installed dependencies
+├── .env                        # Environment variables
+├── .gitignore
+├── index.js                    # Server entry point
+├── package.json
+├── package-lock.json
+├── README.md
+└── swagger.js                  # Swagger/OpenAPI documentation config
+```
+product-catalog-api/
 ├── config/               # Configuration files (future use)
 ├── controllers/          # Request handlers
 │   ├── categoryController.js
