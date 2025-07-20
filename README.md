@@ -32,7 +32,7 @@ A RESTful API built using **Node.js**, **Express.js**, and **MongoDB**. This bac
 
 ## Project Structure
 
-```
+
 product-catalog-api/
 ├── config/                     # Configuration files
 ├── controllers/                # Request handlers
