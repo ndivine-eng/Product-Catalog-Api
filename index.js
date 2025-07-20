@@ -1,44 +1,74 @@
-// Load environment variables
-require('dotenv').config();
-
-// Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const cors = require('cors');
-
-// Initialize Express app
-const app = express();
-
-// Swagger setup
-const { swaggerUi, swaggerSpec } = require('./swagger');
-
-// Middleware setup
-app.use(cors());
-app.use(express.json()); // Allows app to parse JSON request bodies
-
-// Swagger route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Import route handlers
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSPec = require('./swagger');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 
-// Connect to MongoDB
+dotenv.config();
+
+const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log(' Connected to MongoDB'))
-  .catch((err) => console.error(' MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err));
 
-// Use routes
-app.use('/products', productRoutes);
-app.use('/categories', categoryRoutes);
+// Swagger setup
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Product Catalog API',
+      version: '1.0.0',
+      description: 'API for managing products and categories',
+    },
+    servers: [{ url: 'http://localhost:5000' }],
+  },
+  apis: ['./routes/*.js'],
+};
 
-// Root route
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Register models
+require('./models/Product');
+require('./models/Category');
+
+// Routes
 app.get('/', (req, res) => {
-  res.send(' Product Catalog API is running. Use /products or /categories or visit /api-docs for documentation.');
+  res.send(`
+    <h2>✅ Welcome to the Product Catalog API</h2>
+    <ul>
+      <li><a href="/api/products">GET /api/products</a></li>
+      <li><a href="/api/categories">GET /api/categories</a></li>
+      <li><a href="/api-docs">Swagger Docs</a></li>
+    </ul>
+  `);
 });
 
-// Start the server
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+
+// 404 fallback
+app.use((req, res) => {
+  res.status(404).send('<h2>❌ 404 - Not Found</h2>');
+});
+
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(` Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📄 Swagger docs at http://localhost:${PORT}/api-docs`);
 });

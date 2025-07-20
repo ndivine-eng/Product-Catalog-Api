@@ -1,82 +1,128 @@
-
 const Product = require('../models/Product');
+const slugify = require('slugify');
 
-// Create product
+// CREATE a new product
 exports.createProduct = async (req, res) => {
   try {
-    const product = new Product(req.body);
-    const saved = await product.save();
-    res.status(201).json(saved);
+    const { name, description, price, category, variants, discount } = req.body;
+
+    if (!name || !price) {
+      return res.status(400).json({ error: 'Name and price are required' });
+    }
+
+    const slug = slugify(name, { lower: true });
+
+    const product = new Product({
+      name,
+      slug,
+      description,
+      price,
+      discount,
+      category,
+      variants, // includes size, color, stock
+    });
+
+    const savedProduct = await product.save();
+    res.status(201).json(savedProduct);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-// Get all products with search, filtering, and price range
+// GET all products with optional search, category, price, and date filtering
 exports.getAllProducts = async (req, res) => {
   try {
-    const { search, category, minPrice, maxPrice } = req.query;
-    const query = {};
+    const { name, category, minPrice, maxPrice, dateCreated } = req.query;
 
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
-      ];
-    }
-    if (category) query.category = category;
+    const filter = {};
+
+    if (name) filter.name = { $regex: name, $options: 'i' };
+    if (category) filter.category = category;
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = parseFloat(minPrice);
-      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+      filter.price = {};
+      if (minPrice) filter.price.$gte = parseFloat(minPrice);
+      if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+    }
+    if (dateCreated) {
+      filter.createdAt = { $gte: new Date(dateCreated) };
     }
 
-    const products = await Product.find(query).populate('category');
-    res.json(products);
+    const products = await Product.find(filter).populate('category');
+    res.status(200).json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Get product by ID
+// GET product by ID
 exports.getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate('category');
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Update product
+// GET product by Slug
+exports.getProductBySlug = async (req, res) => {
+  try {
+    const product = await Product.findOne({ slug: req.params.slug }).populate('category');
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found by slug' });
+    }
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// UPDATE product by ID
 exports.updateProduct = async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: 'Product not found' });
-    res.json(updated);
+    if (req.body.name) {
+      req.body.slug = slugify(req.body.name, { lower: true });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json(updatedProduct);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-// Delete product
+// DELETE product by ID
 exports.deleteProduct = async (req, res) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Product not found' });
+    if (!deleted) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
     res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Low Stock Reporting Endpoint
+// GET low stock products (reporting feature)
 exports.getLowStockProducts = async (req, res) => {
   try {
     const threshold = parseInt(req.query.threshold) || 5;
+
     const products = await Product.find({
-      variants: { $elemMatch: { stock: { $lt: threshold } } }
+      variants: { $elemMatch: { stock: { $lt: threshold } } },
     }).populate('category');
 
     res.json(products);

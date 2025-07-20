@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const { body, param } = require('express-validator');
 const categoryController = require('../controllers/categoryController');
+const validate = require('../middleware/validate'); // Custom middleware to handle validation errors
 
 /**
  * @swagger
  * tags:
  *   name: Categories
- *   description: Category management
+ *   description: Category management endpoints
  */
 
 /**
@@ -48,7 +50,21 @@ router.get('/', categoryController.getAllCategories);
  *       400:
  *         description: Validation error
  */
-router.post('/', categoryController.createCategory);
+router.post(
+  '/',
+  [
+    body('name')
+      .trim()
+      .notEmpty()
+      .withMessage('Name is required'),
+    body('description')
+      .optional()
+      .isString()
+      .withMessage('Description must be a string')
+  ],
+  validate,
+  categoryController.createCategory
+);
 
 /**
  * @swagger
@@ -101,7 +117,24 @@ router.get('/:idOrSlug', categoryController.getCategory);
  *       404:
  *         description: Category not found
  */
-router.put('/:id', categoryController.updateCategory);
+router.put(
+  '/:id',
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Invalid category ID'),
+    body('name')
+      .optional()
+      .isString()
+      .withMessage('Name must be a string'),
+    body('description')
+      .optional()
+      .isString()
+      .withMessage('Description must be a string')
+  ],
+  validate,
+  categoryController.updateCategory
+);
 
 /**
  * @swagger
@@ -122,6 +155,15 @@ router.put('/:id', categoryController.updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete('/:id', categoryController.deleteCategory);
+router.delete(
+  '/:id',
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Invalid category ID')
+  ],
+  validate,
+  categoryController.deleteCategory
+);
 
 module.exports = router;

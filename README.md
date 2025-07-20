@@ -1,4 +1,3 @@
-
 # Product Catalog API
 
 A RESTful API built using **Node.js**, **Express.js**, and **MongoDB**. This backend powers a product catalog similar to an e-commerce platform, supporting full CRUD operations, inventory tracking, product variants, category management, search/filtering, and more.
@@ -108,13 +107,13 @@ npm run dev
 
 ### Category Endpoints
 
-| Method | Endpoint               | Description        |
-|--------|------------------------|--------------------|
-| GET    | `/categories`          | Get all categories |
-| GET    | `/categories/:id`      | Get category by ID or slug |
-| POST   | `/categories`          | Create category    |
-| PUT    | `/categories/:id`      | Update category    |
-| DELETE | `/categories/:id`      | Delete category    |
+| Method | Endpoint               | Description              |
+|--------|------------------------|--------------------------|
+| GET    | `/categories`          | Get all categories       |
+| GET    | `/categories/:id`      | Get category by ID/slug  |
+| POST   | `/categories`          | Create category          |
+| PUT    | `/categories/:id`      | Update category          |
+| DELETE | `/categories/:id`      | Delete category          |
 
 ### Product Endpoints
 
@@ -282,8 +281,6 @@ Visit: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
 
 ## Slug Support for Categories
 
-- Categories automatically generate a **slug** from their name for cleaner URLs.
-
 Example request:
 ```
 {
@@ -310,8 +307,6 @@ GET /categories/mens-clothing
 
 ## Low-Stock Reporting Endpoint
 
-Identify products that are running low on stock (including variants).
-
 | Method | Endpoint               | Description                     |
 |--------|------------------------|---------------------------------|
 | GET    | `/products/low-stock`  | Get all products with low stock |
@@ -328,26 +323,6 @@ Example usage:
 GET http://localhost:5000/products/low-stock?threshold=3
 ```
 
-**Sample response:**
-
-```
-[
-  {
-    "_id": "687700c93c8d27880b9f9001",
-    "name": "Basic Phone",
-    "description": "Simple phone",
-    "price": 49.99,
-    "stock": 2,
-    "category": {
-      "_id": "68765e6e7cb9b87cdfacbc37",
-      "name": "Electronics"
-    },
-    "variants": [],
-    "__v": 0
-  }
-]
-```
-
 ---
 
 ## Security & Best Practices
@@ -355,6 +330,52 @@ GET http://localhost:5000/products/low-stock?threshold=3
 - Input sanitization with `express-validator`
 - Proper error handling
 - .env for secrets and config
-- JWT support for future authentication (see `.env` setup)
+- JWT support for future authentication
 
 ---
+
+## Advanced Filtering Examples
+
+```
+GET /products/search/filter?name=hoodie
+GET /products/search/filter?category=64e5df5c1a3b5a4fa7cbb3a2
+GET /products/search/filter?createdAfter=2025-07-01&createdBefore=2025-07-18
+GET /products/search/filter?name=hoodie&category=64e5df5c1a3b5a4fa7cbb3a2
+```
+
+Sample category to POST:
+```
+{
+  "name": "Furniture",
+  "description": "Various types of home and office furniture including chairs, tables, and storage units."
+}
+```
+
+Sample product for `GET /api/products`:
+```
+{
+  "name": "Modern Wooden Desk",
+  "description": "Spacious desk made of solid oak wood with drawers.",
+  "price": 250,
+  "discount": 10,
+  "category": "64eea01e8bc4c22a8b199ef5",
+  "variants": [
+    {
+      "size": "Large",
+      "color": "Brown",
+      "stock": 5
+    },
+    {
+      "size": "Medium",
+      "color": "Black",
+      "stock": 8
+    }
+  ]
+}
+```
+
+---
+
+## Demonstration Video
+
+🔗 [Demo on Loom](https://www.loom.com/share/0908740b8d5d4e70bcd7836e8251f22a?sid=e5a67074-34cf-458a-a542-cae87e206489)

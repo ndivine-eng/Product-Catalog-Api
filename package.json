@@ -11,10 +11,12 @@
   "license": "ISC",
   "description": "A RESTful API built using **Node.js**, **Express.js**, and **MongoDB** that powers a backend for a product catalog system — similar to an e-commerce platform. The API supports full CRUD operations, inventory tracking, product variants, category management, and search/filter functionality.",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.3",
     "slugify": "^1.6.6",
     "swagger-jsdoc": "^6.2.8",
