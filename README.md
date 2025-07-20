@@ -58,29 +58,7 @@ product-catalog-api/
 ├── package-lock.json
 ├── README.md
 └── swagger.js                  # Swagger/OpenAPI documentation config
-```
-product-catalog-api/
-├── config/               # Configuration files (future use)
-├── controllers/          # Request handlers
-│   ├── categoryController.js
-│   └── productController.js
-├── middleware/           # Custom middleware
-│   └── validateProduct.js
-├── models/               # Mongoose schemas
-│   ├── Category.js
-│   └── Product.js
-├── routes/               # API route definitions
-│   ├── categoryRoutes.js
-│   └── productRoutes.js
-├── node_modules/
-├── .env                  # Environment variables
-├── .gitignore
-├── index.js              # Server entry point
-├── package.json
-├── package-lock.json
-├── README.md
-└── swagger.js            # Swagger/OpenAPI documentation config
-```
+
 
 ---
 
