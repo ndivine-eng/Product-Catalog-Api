@@ -32,6 +32,7 @@ A RESTful API built using **Node.js**, **Express.js**, and **MongoDB**. This bac
 
 ## Project Structure
 
+---
 
 product-catalog-api/
 ├── config/                     # Configuration files
@@ -59,6 +60,7 @@ product-catalog-api/
 ├── README.md
 └── swagger.js                  # Swagger/OpenAPI documentation config
 
+---
 
 ---
 
